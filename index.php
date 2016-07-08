@@ -1,16 +1,10 @@
 <?php
 session_start();
 
-/*
-$phar = new Phar('pts.phar', 0, 'pts.phar');
-$phar->buildFromDirectory(dirname(__FILE__).'/lib/');
-$phar->setStub($phar->createDefaultStub('core.inc.php'));
-*/
-
 define('ROOT_PATH', dirname(__FILE__).'/');
 define('APP_PATH', ROOT_PATH.'app/');
 
-require_once('lib/core.inc.php');
+require_once('lib/pts/lib/core.inc.php');
 //require_once('pts.phar');
 plugin_require('i18n');
 if( current_locale() == '' ){
