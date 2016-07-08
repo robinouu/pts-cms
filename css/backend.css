@@ -1,0 +1,234 @@
+/* line 5, ../sass/backend.scss */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-family: Verdana, Arial;
+  height: 100%;
+}
+
+/* line 14, ../sass/backend.scss */
+body a {
+  text-decoration: none;
+  color: blue;
+}
+/* line 17, ../sass/backend.scss */
+body a:hover {
+  text-decoration: underline;
+}
+
+/* line 23, ../sass/backend.scss */
+table {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  font-size: 80%;
+}
+/* line 27, ../sass/backend.scss */
+table caption {
+  font-style: italic;
+  font-size: 90%;
+  text-align: left;
+  padding-bottom: 4px;
+}
+/* line 35, ../sass/backend.scss */
+table tr {
+  outline: 1px solid lightgray;
+}
+/* line 38, ../sass/backend.scss */
+table td {
+  padding: 6px;
+}
+
+/* line 43, ../sass/backend.scss */
+b {
+  font-weight: bold;
+}
+
+/* line 47, ../sass/backend.scss */
+i {
+  font-style: italic;
+}
+
+/* line 50, ../sass/backend.scss */
+h1 {
+  margin-bottom: 0;
+  margin-top: 0;
+  font-family: Helvetica;
+  padding: 10px 0;
+}
+
+/* line 57, ../sass/backend.scss */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* line 62, ../sass/backend.scss */
+form {
+  display: block;
+  padding: 10px;
+}
+/* line 65, ../sass/backend.scss */
+form label {
+  font-size: 90%;
+  display: block;
+}
+/* line 69, ../sass/backend.scss */
+form input, form select {
+  margin-bottom: 20px;
+}
+/* line 71, ../sass/backend.scss */
+form input[type=submit], form select[type=submit] {
+  margin-bottom: 0;
+}
+/* line 74, ../sass/backend.scss */
+form input[type=checkbox], form select[type=checkbox] {
+  margin-bottom: 0;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+}
+
+/* line 82, ../sass/backend.scss */
+.menu.inline {
+  width: 80%;
+  margin: 20px auto;
+  padding: 0;
+  list-style-type: none;
+}
+/* line 87, ../sass/backend.scss */
+.menu.inline ul {
+  display: none;
+}
+/* line 90, ../sass/backend.scss */
+.menu.inline li {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  border-bottom: 1px solid lightgray;
+  position: relative;
+}
+/* line 95, ../sass/backend.scss */
+.menu.inline li:hover ul {
+  display: block;
+}
+/* line 100, ../sass/backend.scss */
+.menu.inline a {
+  display: block;
+  padding: 6px;
+  background-color: #fff;
+  font-size: 80%;
+  color: black;
+}
+/* line 106, ../sass/backend.scss */
+.menu.inline a:hover {
+  background-color: lightgreen;
+  text-decoration: none;
+}
+
+/* line 113, ../sass/backend.scss */
+.menu ul.lvl2 {
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  width: 100%;
+}
+/* line 118, ../sass/backend.scss */
+.menu ul.lvl2 li {
+  display: block;
+  font-size: 80%;
+}
+
+/* line 123, ../sass/backend.scss */
+div.menu {
+  position: absolute;
+  top: 0;
+  border-bottom: 1px solid cyan;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  background-color: #29272b;
+}
+/* line 127, ../sass/backend.scss */
+div.menu.bottom {
+  border-bottom: none;
+  border-top: 1px solid cyan;
+  top: auto;
+  bottom: 0;
+}
+/* line 138, ../sass/backend.scss */
+div.menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+/* line 143, ../sass/backend.scss */
+div.menu li {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  border: 1px solid transparent;
+}
+/* line 146, ../sass/backend.scss */
+div.menu li.icon > a {
+  width: 22px;
+  height: 22px;
+}
+/* line 149, ../sass/backend.scss */
+div.menu li.icon > a.updated {
+  color: lightgreen;
+}
+/* line 153, ../sass/backend.scss */
+div.menu li:hover {
+  border: 1px solid white;
+}
+/* line 158, ../sass/backend.scss */
+div.menu a {
+  padding: 6px;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  color: white;
+}
+/* line 164, ../sass/backend.scss */
+div.menu a.link-radio-next {
+  display: none;
+}
+/* line 166, ../sass/backend.scss */
+div.menu a.link-radio-next.visible {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+}
+
+/* line 175, ../sass/backend.scss */
+.form_plugins label {
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+}
+
+/* line 180, ../sass/backend.scss */
+.page {
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* line 185, ../sass/backend.scss */
+.article {
+  width: 80%;
+  margin: 0 auto;
+}

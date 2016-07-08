@@ -1,0 +1,3 @@
+[submodule "lib/pts"]
+	path = lib/pts
+	url = https://github.com/robinouu/php-tool-suite.git
