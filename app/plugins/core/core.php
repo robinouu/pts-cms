@@ -68,6 +68,18 @@ function get_site_settings(){
 on('plugin/core/init', function (){
 	plugin_require('response');
 
+	on('html/adminMenu', function (){
+		return array(
+			__('Configuration') => array('url' => '/admin/settings', 'children' => array()),
+			__('Plugins') => array('url' => '/admin/plugins', 'children' => array()),
+		);
+	});
+	on('html/adminMenu', function (){
+		return array(
+			__('Voir le site') => array('url' => '/', 'children' => array())
+		);
+	}, PHP_INT_MAX);
+
 	route(var_get('core/adminRoute'), function (){
 		var_set('html/title', 'Tableau de bord');
 

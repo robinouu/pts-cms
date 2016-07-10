@@ -17,7 +17,8 @@
 		<ul class="menu inline">
 			<li><a href="/admin">Tableau de bord</a></li>
 		<?php
-		$menu = trigger('html/adminMenu', array());
+		$res = array();
+		$menu = trigger('html/adminMenu', $res);
 		foreach ($menu as $item => $link) {
 			if( is_array($link) ){
 				print '<li><a href="'.$link['url'].'">'.$item.'</a><ul class="lvl2">';
@@ -30,9 +31,7 @@
 			}
 		}
 		?>
-			<li><a href="/admin/settings">Configuration</a></li>
-			<li><a href="/admin/plugins">Plugins</a></li>
-			<li><a href="/">Voir le site</a></li>
+			
 		</ul>
 	<?php } ?>
 		<?php print trigger('html/body'); ?>

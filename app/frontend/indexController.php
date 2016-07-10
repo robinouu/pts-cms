@@ -4,11 +4,11 @@
  */
 
 var_set('html', array(
-	'title' => 'PHP Tool Suite',
+	'title' => 'CMS - PHP Tool Suite',
 	'meta' => array(
-		'viewport' => 'width=device-width, initial-scale=1.0, shrink-to-fit=no',
+		'viewport' => 'width=device-width, initial-scale=1.0',
 		'author' => 'Robin RUAUX',
-		'description' => 'Framework PHP pour vos développements multimédia.',
+		'description' => 'CMS basé sur le framework PHP Tool Suite, permet de configurer un site ou une application PHP.',
 		'generator' => 'PHP Tool Suite (CMS)',
 	),
 	'stylesheets' => array('/css/karma.css', '/css/backend.css', '/js/jquery.datetimepicker.css'),

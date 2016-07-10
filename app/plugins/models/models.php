@@ -39,14 +39,22 @@ on('plugin/models/install', function () {
 on('plugin/models/uninstall', function (){
 	$schema = new Schema(var_get('models/schema'));
 	if( var_get('core/destroyTables', false) ) {
-		return $schema->destroyTables();
+		$modelModel = $schema->getModel('model');
+		$models = $modelModel->get();
+		$back = true;
+		if( $models ){
+			foreach ($models as $m) {
+				$back = $back && model_delete($m);
+			}
+		}
+		return $back && $schema->destroyTables();
 	}
 	if( var_get('core/truncateTables', false) ){
 		return $schema->truncateTables();
 	}
 });
 
-function model_field_to_field($field){
+function sql_field_to_field($field){
 	$schema = new Schema(var_get('models/schema'));
 	$field['options'] = @unserialize($field['options']);
 	if( !$field['options'] ) {
@@ -80,13 +88,29 @@ function model_generate($model) {
 	$db = array($model['slug'] => array('fields' => array()));
 	if( $model_fields ){
 		foreach( $model_fields as $mf ){
-			$field = model_field_to_field($mf);
+			$field = sql_field_to_field($mf);
 			$db[$model['slug']]['fields'][$mf['slug']] = $field;
 		}
 		$s = new Schema($db);
 		$prefix = var_get('sql/prefix');
 		var_set('sql/prefix', $prefix . 'data_');
 		$s->generateTables();
+		var_set('sql/prefix', $prefix);
+	}
+};
+
+function model_delete($model) {
+	$schema = new Schema(var_get('models/schema'));
+	$modelModel = $schema->getModel('model');
+
+	$model_fields = $modelModel->select('f.*')->using('fields', 'f')->where('model.id='.$model['id'])->get();
+	$db = array($model['slug'] => array('fields' => array()));
+	if( $model_fields ){
+		$s = new Schema($db);
+		$prefix = var_get('sql/prefix');
+		var_set('sql/prefix', $prefix . 'data_');
+		var_dump($db);
+		$s->destroyTables();
 		var_set('sql/prefix', $prefix);
 	}
 };
@@ -189,9 +213,13 @@ on('plugin/models/init', function (){
 	));
 
 	$models = $modelModel->get();
+	$sqlModels = array();
+	$models = array_merge($models, $sqlModels);
 	if( $models ){
 		foreach ($models as $m) {
 			model_generate($m);
+		}
+		foreach ($models as $m) {
 			$dataModel = new Model($m['slug']);
 			$dataModel->crud(array(
 				'route' => var_get('core/adminRoute'),
@@ -207,7 +235,7 @@ on('plugin/models/init', function (){
 				redirect(var_get('core/adminRoute').'/datas/'.$m['slug']);
 			});
 
-			route(var_get('core/adminRoute').'/datas/'.$m['slug'].'/add', function () use($m, $dataModel){
+			route(var_get('core/adminRoute').'/datas/'.$m['slug'].'/add', function () use($m, $modelModel, $dataModel){
 		
 				$success = false;
 				$error = array();
@@ -216,7 +244,6 @@ on('plugin/models/init', function (){
 					$url = url_website().var_get('core/adminRoute').'/'.$m['slug'].'/create';
 					$json = crawler_post_url($url, $_REQUEST);
 
-					$json = json_decode($json, true);
 					if( $json['success'] )
 						$success = __('Le contenu a été ajouté.');
 					else
@@ -227,8 +254,8 @@ on('plugin/models/init', function (){
 				var_set('html/title', $m['name'] . ' - ' . __('Nouveau contenu'));
 
 
-				on('html/body', function () use ($m, $dataModel, $success, $error) {
-					$html = title(sprintf(__('Ajout d\'un contenu de type %s'), $m['name']));
+				on('html/body', function () use ($m, $dataModel, $success, $error, $modelModel) {
+					$html = title(sprintf(__('Ajout d\'un contenu "%s"'), $m['name']));
 					if( $success ){
 						$html .= p($success, array('class'=>'klog'));
 					}
@@ -237,6 +264,39 @@ on('plugin/models/init', function (){
 					}
 					$html .= '<form action="" method="POST" class="form_'.$m['slug'].'">';
 					
+					$schema = new Schema(var_get('models/schema'));					
+					$fields = $dataModel->getFields();
+					foreach( $fields as &$f ){
+
+						$type = $f->getSQLField();
+						$isRelationField = isset($type['relation']) && $type['relation'];
+
+						if( $isRelationField ) {
+
+							$dM = $schema->getModel($f->attributes['data']);
+							$prefix = var_get('sql/prefix');
+							var_set('sql/prefix','data_');
+							$data = $dM->get();
+							var_set('sql/prefix', $prefix);
+
+							$selectData = array();
+							if( $data ){
+								foreach ($data as $key => $d) {
+									$str = $d['id'];
+									foreach ($d as $k => $v) {
+										if( is_string($v) && $k != 'id' ){
+											$str = $v;
+											break;
+										}
+									}
+									$selectData[$d['id']] = $str;
+								}
+								$f->attributes['datas'] = $selectData;
+							}else{
+								$f->attributes['datas'] = array();
+							}
+						}
+					}
 
 					$html .= $dataModel->generateFields(array_keys($dataModel->getFields()), function (&$field){
 						$field->attributes['sqlPrefix'] = 'data_';
@@ -359,6 +419,7 @@ on('plugin/models/init', function (){
 		$json = json_load(url_website().var_get('core/adminRoute').'/model/read');
 		$list = $json['datas'];
 
+		var_set('html/title', __('Modèles de données'));
 		on('html/body', function () use ($list) {
 			$html = title(__('Modèles de données'));
 			if( $list ){
@@ -455,19 +516,22 @@ on('plugin/models/init', function (){
 				On modifie son nom si besoin
 			*/
 			$newField = $modelModel->select('f.*')->using('fields', 'f')->where('f.id='.$fid)->limit(1)->get();
+			//model_generate($model);
 
 			$prefix = var_get('sql/prefix');
 			var_set('sql/prefix', $prefix . 'data_');
 			
-			$f = model_field_to_field($newField);
+			$f = sql_field_to_field($newField);
 
 			// Rename ?
 			$column_exists = false;
 			if( $field['slug'] != $_REQUEST['slug'] ){
 				$type = $f->getSQLField();
 				$type = $type['type'];
-
+				$isRelationField = isset($type['relation']) && $type['relation'];
+				
 				$column_exists = sql_column_exists($model['slug'], $_REQUEST['slug']);
+
 				if( $column_exists )
 					sql_remove_column($model['slug'], $_REQUEST['slug']);
 				sql_rename_column($model['slug'], $field['slug'], $_REQUEST['slug'], $type);
@@ -538,13 +602,12 @@ on('plugin/models/init', function (){
 				))->where('id='.$id)->commit();
 
 				$field = $fieldModel->where('id='.$json['id'])->limit(1)->get();
-				$f = model_field_to_field($field);
+				$f = sql_field_to_field($field);
 
 				$prefix = var_get('sql/prefix');
 				var_set('sql/prefix', $prefix . 'data_');
 
 				// Properties
-				var_dump($model['slug'], $f->attributes['name']);
 				sql_update_column($model['slug'], $_REQUEST['slug'], $f);
 
 				var_set('sql/prefix', $prefix);
@@ -628,6 +691,7 @@ on('plugin/models/init', function (){
 				'slug' => trim($_REQUEST['slug']) ? $_REQUEST['slug'] : slug($_REQUEST['name']),
 				'description' => $_REQUEST['description']
 			))->commit();
+			$
 			$success = __('Le modèle a été ajouté en base de donnée. Vous pouvez dès à présent le configurer');
 		}
 
@@ -651,4 +715,4 @@ on('plugin/models/init', function (){
 		require(dirname(__FILE__).'/../core/tpl/header.php');
 	});
 
-});
+}, 1);

@@ -46,11 +46,12 @@ route('/install', function (){
 			$siteModel->insert(array(
 				'domain' => url_website(root_url()),
 				'settings' => array(
-					array('name' => 'sitename', 'value' => $_REQUEST['sitename']),
-					array('name' => 'theme', 'value' => var_get('install/defaultTheme')),
-					array('name' => 'plugins_loaded', 'value' => @serialize($_REQUEST['plugins']))
+					array('name' => 'sitename', 'title' => 'Nom du site', 'value' => $_REQUEST['sitename']),
+					array('name' => 'theme', 'title' => 'Thème installé', 'value' => var_get('install/defaultTheme')),
+					array('name' => 'plugins_loaded', 'title' => 'Plugins activés', 'description' => 'Plugins chargés en mémoire au lancement', 'value' => @serialize($_REQUEST['plugins']))
 				)
 			))->commit();
+
 
 			// Install plugins
 			foreach( $_REQUEST['plugins'] as $plugin ){
